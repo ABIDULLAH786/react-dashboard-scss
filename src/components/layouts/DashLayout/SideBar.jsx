@@ -1,17 +1,21 @@
 import { forwardRef, useLayoutEffect } from "react";
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import styles from "./SideBar.module.scss";
 import {
+  ArrowIcon,
+  ArrowRightIcon,
   BestAdsIcon,
   CRMIcon,
   CampaignsIcon,
   DashboardIcon,
   MessagesIcon,
+  MinusIcon,
   ReportIcon,
   SalesIcon,
   SideBarIcon,
 } from "../../../assets/icons";
+import { Minus } from "../../../assets/icons/minus-icon";
 const adminMenu = [
   {
     title: "Dashboard",
@@ -20,8 +24,25 @@ const adminMenu = [
   },
   {
     title: "Reports",
-    href: "/dashboard/reports",
+    // href: "/dashboard/reports",
     icon: <ReportIcon />,
+    subMenus: [
+      {
+        title: "Daily Report",
+        href: "/dashboard/reports/daily-report",
+        icon: <Minus />,
+      },
+      {
+        title: "Today Report",
+        href: "/dashboard/reports/today-report",
+        icon: <Minus />,
+      },
+      {
+        title: "Yesterday Report",
+        href: "/dashboard/reports/yesterday-report",
+        icon: <Minus />,
+      },
+    ],
   },
   {
     title: "Campaigns",
@@ -30,57 +51,93 @@ const adminMenu = [
   },
   {
     title: "Best Ads",
-    href: "/dashboard/best-ads",
+    // href: "/dashboard/best-ads",
     icon: <BestAdsIcon />,
+    subMenus: [
+      {
+        title: "Best Ad Set",
+        href: "/dashboard/best-ads/set",
+        icon: <Minus />,
+      },
+      {
+        title: "Best Ads",
+        href: "/dashboard/best-ads",
+        icon: <Minus />,
+      },
+    ],
   },
   {
     title: "CRM",
-    href: "/dashboard/crm",
+    // href: "/dashboard/crm",
     icon: <CRMIcon />,
+    subMenus: [
+      {
+        title: "All Calls Booked",
+        href: "/dashboard/crm/all-calls-booked",
+        icon: <Minus />,
+      },
+      {
+        title: "All Leads",
+        href: "/dashboard/crm/all-leads",
+        icon: <Minus />,
+      },
+      {
+        title: "High Quality Leads",
+        href: "/dashboard/crm/heigh-quality-leads",
+        icon: <Minus />,
+      },
+    ],
   },
   {
     title: "Sales",
-    href: "/dashboard/sales",
+    // href: "/dashboard/sales",
     icon: <SalesIcon />,
+    subMenus: [
+      {
+        title: "JR Sales",
+        href: "/dashboard/sales/jr-sales",
+        icon: <Minus />,
+      },
+      {
+        title: "JR Premium Sales",
+        href: "/dashboard/sales/jr-premium-sales",
+        icon: <Minus />,
+      },
+    ],
   },
   {
     title: "AI",
-    href: "/dashboard/ai",
+    href: "/dashboard/ai-chat",
     icon: <MessagesIcon />,
   },
-
-  // {
-  //   title: "Posts",
-  //   icon: <BsFileEarmarkTextFill className="h-5 w-5" />,
-  //   subMenus: [
-  //     {
-  //       title: "All Posts",
-  //       href: "/dashboard/admin/all-posts",
-  //       icon: <BsFileEarmarkTextFill className="h-5 w-5" />
-  //     },
-  //     {
-  //       title: "Posts Requests",
-  //       href: "/dashboard/admin/post-request",
-  //       icon: <BsFileEarmarkPlusFill className="h-5 w-5" />
-  //     },
-  //     {
-  //       title: "rejected Posts",
-  //       href: "/dashboard/admin/rejected-posts",
-  //       icon: <BsFillFileEarmarkMinusFill className="h-5 w-5" />
-  //     },
-  //   ]
-  // }
 ];
 
 const SideBar = forwardRef(({ showNav, setShowNav }, ref) => {
   const [subMenuOpen, setSubMenuOpen] = useState(false);
+  const [openedMenu, setOpenedMenu] = useState("");
   const [route, setRoute] = useState(null);
   const location = useLocation();
+  const navigate = useNavigate();
   useEffect(() => {
     setRoute(location.pathname);
   }, [window.location.pathname]);
+
+  const handleMenuItemClick = (link, title) => {
+    if (link) {
+      navigate(link);
+    } else if (title !== openedMenu) {
+      setOpenedMenu(title);
+      setSubMenuOpen(true);
+    } else {
+      setSubMenuOpen(!subMenuOpen);
+    }
+  };
   return (
-    <div ref={ref} className={styles.container}>
+    <div
+      ref={ref}
+      className={styles.container}
+      style={{ width: showNav ? "260px" : "80px" }}
+    >
       <div className={styles.brand_logo_container}>
         <div className={styles.brand_logo}>
           <img
@@ -108,50 +165,65 @@ const SideBar = forwardRef(({ showNav, setShowNav }, ref) => {
       {
         <div className={styles.side_menu_wrapper}>
           {adminMenu.map((item, index) => (
-            <Link
-              key={index}
-              className={`${styles.side_menu_item_container}  ${
-                route == item?.href ? styles.active : ""
-              }`}
-              to={item.href ? item.href : ""}
-              style={{
-                textDecoration: "none",
-                color: "inherit",
-              }}
-            >
-              <div>
-                <div className={`${styles.side_menu_item}`}>
-                  {console.log(item?.href?.split("/"))}
-                  {console.log(
-                    route?.split("/")[1] == item?.href?.split("/")[1]
-                  )}
-                  {item.icon}
-                  {showNav && (
-                    <div className={styles.menu_item_text}>{item.title}</div>
-                  )}
-                  {/* {item.subMenus && (
-                      <div className="flex justify-end">
-                        <FiChevronDown
-                          className={`w-5 h-5 ${subMenuOpen && "rotate-180"}`}
-                          onClick={() => setSubMenuOpen(!subMenuOpen)}
-                        />
+            <>
+              <div
+                key={index}
+                className={`${styles.side_menu_item_container}  ${
+                  route == item?.href ||
+                  item?.subMenus?.map((item) => item.href)?.includes(route)
+                    ? styles.active_menu_item
+                    : ""
+                }`}
+                onClick={() => handleMenuItemClick(item.href, item.title)}
+              >
+                <div style={{ width: "100%" }}>
+                  <div className={`${styles.side_menu_item}`}>
+                    {item.icon}
+                    {showNav && (
+                      <div className={styles.menu_item_text}>{item.title}</div>
+                    )}
+                    {item.subMenus && (
+                      <div
+                        className={styles.arrow_icon}
+                        style={{
+                          transform:
+                            item.title == openedMenu && subMenuOpen
+                              ? "rotate(90deg)"
+                              : "rotate(0deg)",
+                        }}
+                      >
+                        <ArrowRightIcon />
                       </div>
-                    )} */}
+                    )}
+                  </div>
                 </div>
               </div>
-              {/* {adminMenu.subMenus && subMenuOpen && (
-                                <ul>
-                                    {adminMenu.subMenus.map((subMenuItem, idx) => (
-                                        <li
-                                            key={idx}
-                                            className="flex px-5 cursor-pointer text-center text-sm text-gray-900 py-1"
-                                        >
-                                            {subMenuItem.title}
-                                        </li>
-                                    ))}
-                                </ul>
-                            )} */}
-            </Link>
+              {item.subMenus &&
+                showNav &&
+                subMenuOpen &&
+                item.title == openedMenu && (
+                  <div className={styles.sub_menu_items_container}>
+                    {item.subMenus.map((subMenuItem, index) => (
+                      <Link
+                        to={subMenuItem.href ? subMenuItem.href : ""}
+                        style={{
+                          textDecoration: "none",
+                          color: route == subMenuItem.href ? "#1570EF" : "",
+                        }}
+                        className={`${styles.sub_menu_item}`}
+                        key={index}
+                      >
+                        <MinusIcon
+                          color={
+                            route == subMenuItem.href ? "#1570EF" : "#D6D6D6"
+                          }
+                        />
+                        {subMenuItem.title}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+            </>
           ))}
         </div>
       }

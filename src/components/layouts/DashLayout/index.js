@@ -30,8 +30,9 @@ export default function DashLayout({ children }) {
     return (
         <div className={styles.layout_root}>
 
-            <div style={{ width: showNav ? "250px" : "80px" }}>
-                {console.log(showNav)}
+            <div style={{
+                width: showNav ? "260px" : "80px", marginRight: "33px",
+            }}>
                 <SideBar showNav={showNav} setShowNav={setShowNav} />
 
             </div>
