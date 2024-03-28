@@ -1,0 +1,29 @@
+@import "../../global.scss";
+@import "../../variables.scss";
+
+/* Laptop screens and larger */
+@media only screen and (min-width: $breakpoint-laptop) {
+  .container {
+    // samples for color import
+
+    // background-color: var(--primary-color);
+    // color: var(--secondary-color);
+    // font-family: var(--font-family);
+  }
+}
+/* small Mobile screens */
+@media only screen and (max-width: $breakpoint-sm-phone) {
+  .container {
+  }
+}
+
+/* Mobile screens */
+@media only screen and (max-width: $breakpoint-mobile) {
+  .container {
+  }
+}
+/* Tablet screens */
+@media only screen and (min-width: $breakpoint-mobile) and (max-width: $breakpoint-tablet) {
+  .container {
+  }
+}

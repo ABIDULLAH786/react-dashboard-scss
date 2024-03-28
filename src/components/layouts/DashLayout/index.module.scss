@@ -1,0 +1,22 @@
+.layout_root {
+    display: flex;
+
+    .main_wrapper {
+        width: 100%;
+        transition: all 400ms;
+
+        .main_container {
+            background-color: #2467ec;
+            // height: 100%;
+            // min-height: 100vh;
+            // max-height: 100%;
+
+            .content_wrapper {
+                padding: 24px;
+            }
+        }
+
+
+    }
+
+}
